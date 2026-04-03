@@ -105,6 +105,7 @@ This creates a clean release layout under `artifacts/releases/<version>/win-x64/
 
 - a standalone Windows installer `.exe`
 - a portable ZIP package
+- a `winget` manifest bundle ZIP
 - `SHA256SUMS.txt`
 - `package-manifest.json`
 - `RELEASE-NOTES.md`
@@ -127,6 +128,24 @@ Silent install for automation or package managers:
 ```powershell
 .\artifacts\releases\<version>\win-x64\NSearcher-Setup-<version>-win-x64.exe /quiet
 ```
+
+### Winget Manifests
+
+Generate submission-ready `winget` manifests for a tagged release:
+
+```powershell
+.\scripts\package-winget-manifest.ps1 -TagVersion v1.0.2 -PackageVersion 1.0.2
+```
+
+This writes the standard manifest triplet under:
+
+- `packaging/winget/manifests/n/Nassim0x/NSearcher/<version>/`
+
+When `package-release.ps1` runs, it also emits a release-ready archive:
+
+- `artifacts/releases/<version>/win-x64/NSearcher-winget-manifests-<version>.zip`
+
+These manifests are intended for submission to the public `winget-pkgs` repository after a release is published.
 
 ## Feature Set
 
@@ -274,14 +293,6 @@ Each benchmark run writes:
 - `artifacts/benchmarks/nsearcher-vs-ripgrep.svg` when ripgrep comparison is enabled
 - `artifacts/benchmarks/nsearcher-vs-ripgrep-vs-grep-vs-ugrep.svg` when CLI comparison is enabled
 
-## Release Automation
-
-GitHub Actions workflow:
-
-- `.github/workflows/release-package.yml`
-
-It builds the Windows package on demand or on `v*` tags, uploads the generated release artifacts, and publishes them to GitHub Releases on tag pushes.
-
 ## Build
 
 ```powershell
@@ -289,20 +300,3 @@ dotnet build .\NSearcher.slnx -c Release
 dotnet test .\NSearcher.Core.Tests\NSearcher.Core.Tests.csproj -c Release
 dotnet publish .\NSearcher.Cli -c Release -r win-x64 --self-contained false
 ```
-
-## Current Positioning
-
-NSearcher already has a solid professional base:
-
-- fast engine with measurable gains over the internal baseline
-- clean Windows installation story
-- transparent benchmark methodology
-- strong showing against `ripgrep` and `grep`
-- competitive overall position against `ugrep`
-
-The next high-value phase is not reckless micro-optimization. It is consolidation:
-
-- performance non-regression checks
-- packaging polish
-- CI benchmark automation
-- continued CLI ergonomics and documentation quality
