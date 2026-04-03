@@ -5,6 +5,7 @@ obj/
 # User / tool state
 .vs/
 .tools/
+gcm-diagnose.log
 *.user
 *.suo
 *.ncb
@@ -18,6 +19,7 @@ literal-many-small-files/
 artifacts/native-launcher/
 artifacts/publish/
 artifacts/publish-aot/
+artifacts/releases/
 artifacts/profiling/
 
 # Benchmark artifacts: keep only the curated snapshot files referenced by the README

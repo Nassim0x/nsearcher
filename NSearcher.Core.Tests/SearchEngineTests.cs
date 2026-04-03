@@ -312,6 +312,96 @@ public sealed class SearchEngineTests : IDisposable
         Assert.Equal(3, summary.MatchCount);
     }
 
+    [Fact]
+    public async Task RegexPrefilter_DoesNotSkipAlternationMatches()
+    {
+        WriteFile("regex/alternation.txt", "bar\n");
+
+        var results = new List<SearchFileResult>();
+        var engine = new SearchEngine();
+
+        var summary = await engine.ExecuteAsync(
+            new SearchOptions
+            {
+                Pattern = "foo|bar",
+                Paths = [Path.Combine(_rootDirectory, "regex")],
+                UseRegex = true,
+                CaseMode = CaseMode.Sensitive,
+                CountOnly = true
+            },
+            (result, _) =>
+            {
+                results.Add(result);
+                return ValueTask.CompletedTask;
+            });
+
+        var match = Assert.Single(results);
+        Assert.Equal(1, match.MatchLineCount);
+        Assert.Equal(1, match.MatchCount);
+        Assert.Equal(1, summary.MatchLines);
+        Assert.Equal(1, summary.MatchCount);
+    }
+
+    [Fact]
+    public async Task RegexPrefilter_DoesNotSkipOptionalMatches()
+    {
+        WriteFile("regex/optional.txt", "color\n");
+
+        var results = new List<SearchFileResult>();
+        var engine = new SearchEngine();
+
+        var summary = await engine.ExecuteAsync(
+            new SearchOptions
+            {
+                Pattern = "colou?r",
+                Paths = [Path.Combine(_rootDirectory, "regex")],
+                UseRegex = true,
+                CaseMode = CaseMode.Sensitive,
+                CountOnly = true
+            },
+            (result, _) =>
+            {
+                results.Add(result);
+                return ValueTask.CompletedTask;
+            });
+
+        var match = Assert.Single(results);
+        Assert.Equal(1, match.MatchLineCount);
+        Assert.Equal(1, match.MatchCount);
+        Assert.Equal(1, summary.MatchLines);
+        Assert.Equal(1, summary.MatchCount);
+    }
+
+    [Fact]
+    public async Task SimpleRegexMatcher_UsesUnicodeDigitSemantics()
+    {
+        WriteFile("regex/unicode-digits.txt", "ERR-١٢٣٤\n");
+
+        var results = new List<SearchFileResult>();
+        var engine = new SearchEngine();
+
+        var summary = await engine.ExecuteAsync(
+            new SearchOptions
+            {
+                Pattern = @"ERR-\d{4}",
+                Paths = [Path.Combine(_rootDirectory, "regex")],
+                UseRegex = true,
+                CaseMode = CaseMode.Sensitive,
+                CountOnly = true
+            },
+            (result, _) =>
+            {
+                results.Add(result);
+                return ValueTask.CompletedTask;
+            });
+
+        var match = Assert.Single(results);
+        Assert.Equal(1, match.MatchLineCount);
+        Assert.Equal(1, match.MatchCount);
+        Assert.Equal(1, summary.MatchLines);
+        Assert.Equal(1, summary.MatchCount);
+    }
+
     public void Dispose()
     {
         if (Directory.Exists(_rootDirectory))

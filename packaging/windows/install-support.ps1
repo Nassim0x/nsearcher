@@ -1,17 +1,12 @@
-param(
-    [string]$Configuration = "Release",
-    [string]$Runtime = "win-x64",
-    [string]$InstallDir = "$env:LOCALAPPDATA\Programs\NSearcher",
-    [switch]$DisableAot
-)
-
-$ErrorActionPreference = "Stop"
-. (Join-Path $PSScriptRoot 'publish-runtime.ps1')
+function Write-Step {
+    param([string]$Message)
+    Write-Host "==> $Message" -ForegroundColor Cyan
+}
 
 function Add-DirectoryToUserPath {
     param([string]$Directory)
 
-    $currentUserPath = [Environment]::GetEnvironmentVariable("Path", "User")
+    $currentUserPath = [Environment]::GetEnvironmentVariable('Path', 'User')
     $entries = @()
 
     if (-not [string]::IsNullOrWhiteSpace($currentUserPath)) {
@@ -25,7 +20,7 @@ function Add-DirectoryToUserPath {
     if (-not $alreadyPresent) {
         $updatedEntries = @($entries + $Directory)
         $updatedUserPath = ($updatedEntries -join ';').Trim(';')
-        [Environment]::SetEnvironmentVariable("Path", $updatedUserPath, "User")
+        [Environment]::SetEnvironmentVariable('Path', $updatedUserPath, 'User')
         Write-Host "Added '$Directory' to the user PATH." -ForegroundColor Green
     }
     else {
@@ -42,6 +37,25 @@ function Add-DirectoryToUserPath {
     }
 }
 
+function Remove-DirectoryFromUserPath {
+    param([string]$Directory)
+
+    $currentUserPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+    if ([string]::IsNullOrWhiteSpace($currentUserPath)) {
+        return
+    }
+
+    $updatedEntries = $currentUserPath.Split(';', [System.StringSplitOptions]::RemoveEmptyEntries) |
+        Where-Object { $_.TrimEnd('\') -ine $Directory.TrimEnd('\') }
+
+    [Environment]::SetEnvironmentVariable('Path', (($updatedEntries -join ';').Trim(';')), 'User')
+
+    $sessionEntries = $env:Path.Split(';', [System.StringSplitOptions]::RemoveEmptyEntries) |
+        Where-Object { $_.TrimEnd('\') -ine $Directory.TrimEnd('\') }
+
+    $env:Path = ($sessionEntries -join ';').Trim(';')
+}
+
 function Stop-InstalledProcesses {
     param([string]$Directory)
 
@@ -56,27 +70,3 @@ function Stop-InstalledProcesses {
         } |
         Stop-Process -Force -ErrorAction SilentlyContinue
 }
-
-$projectRoot = Split-Path -Parent $PSScriptRoot
-$publishResult = Publish-NSearcher `
-    -ProjectRoot $projectRoot `
-    -Configuration $Configuration `
-    -Runtime $Runtime `
-    -DisableAot:$DisableAot
-
-$publishMode = $publishResult.PublishMode
-$launcherMode = $publishResult.LauncherMode
-
-Write-Step "Installing into $InstallDir"
-New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
-Stop-InstalledProcesses -Directory $InstallDir
-Get-ChildItem -Path $InstallDir -Force | Remove-Item -Recurse -Force
-Copy-NSearcherInstallLayout -PublishResult $publishResult -Destination $InstallDir
-
-Add-DirectoryToUserPath -Directory $InstallDir
-
-Write-Step "Installation complete"
-Write-Host "Publish mode: $publishMode" -ForegroundColor Green
-Write-Host "Launcher mode: $launcherMode" -ForegroundColor Green
-Write-Host "Open a new terminal, then run:" -ForegroundColor Green
-Write-Host "  NSearcher --help" -ForegroundColor White

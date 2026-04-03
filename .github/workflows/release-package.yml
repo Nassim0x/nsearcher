@@ -1,0 +1,66 @@
+name: release-package
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version label for the package. Leave empty to use git describe.
+        required: false
+        type: string
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  package-windows:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Run tests
+        shell: pwsh
+        run: dotnet test .\NSearcher.Core.Tests\NSearcher.Core.Tests.csproj -c Release -p:UseSharedCompilation=false
+
+      - name: Build release package
+        shell: pwsh
+        run: |
+          $requestedVersion = "${{ inputs.version }}"
+          if ("${{ github.event_name }}" -eq "push") {
+            $requestedVersion = "${{ github.ref_name }}"
+          }
+
+          if ([string]::IsNullOrWhiteSpace($requestedVersion)) {
+            .\scripts\package-release.ps1 -Configuration Release -Runtime win-x64
+          }
+          else {
+            .\scripts\package-release.ps1 -Configuration Release -Runtime win-x64 -Version $requestedVersion
+          }
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nsearcher-release-win-x64
+          path: artifacts/releases/**
+          if-no-files-found: error
+
+      - name: Publish GitHub release assets
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: artifacts/releases/${{ github.ref_name }}/win-x64/RELEASE-NOTES.md
+          files: |
+            artifacts/releases/${{ github.ref_name }}/win-x64/*.zip
+            artifacts/releases/${{ github.ref_name }}/win-x64/*.txt
+            artifacts/releases/${{ github.ref_name }}/win-x64/*.json
+            artifacts/releases/${{ github.ref_name }}/win-x64/*.md

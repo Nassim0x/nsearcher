@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -269,8 +270,20 @@ internal sealed class SearchPattern
                 : currentBest;
         }
 
-        foreach (var character in pattern)
+        void FlushCurrent()
         {
+            if (current.Length >= MinimumRegexPrefilterLength)
+            {
+                best = PickLongerLiteral(best, current.ToString());
+            }
+
+            current.Clear();
+        }
+
+        for (var index = 0; index < pattern.Length; index++)
+        {
+            var character = pattern[index];
+
             if (escaped)
             {
                 escaped = false;
@@ -281,12 +294,7 @@ internal sealed class SearchPattern
                     continue;
                 }
 
-                if (current.Length >= MinimumRegexPrefilterLength)
-                {
-                    best = PickLongerLiteral(best, current.ToString());
-                }
-
-                current.Clear();
+                FlushCurrent();
                 continue;
             }
 
@@ -297,12 +305,7 @@ internal sealed class SearchPattern
                     inCharacterClass = false;
                 }
 
-                if (current.Length >= MinimumRegexPrefilterLength)
-                {
-                    best = PickLongerLiteral(best, current.ToString());
-                }
-
-                current.Clear();
+                FlushCurrent();
                 continue;
             }
 
@@ -312,38 +315,71 @@ internal sealed class SearchPattern
                 continue;
             }
 
+            if (character is '|' or '?' or '*')
+            {
+                return null;
+            }
+
             if (character == '[')
             {
-                if (current.Length >= MinimumRegexPrefilterLength)
+                FlushCurrent();
+                inCharacterClass = true;
+                continue;
+            }
+
+            if (character == '{')
+            {
+                if (!TryReadSafeExactQuantifier(pattern, ref index, out _))
                 {
-                    best = PickLongerLiteral(best, current.ToString());
+                    return null;
                 }
 
-                current.Clear();
-                inCharacterClass = true;
+                FlushCurrent();
                 continue;
             }
 
             if (IsRegexMetaCharacter(character))
             {
-                if (current.Length >= MinimumRegexPrefilterLength)
-                {
-                    best = PickLongerLiteral(best, current.ToString());
-                }
-
-                current.Clear();
+                FlushCurrent();
                 continue;
             }
 
             current.Append(character);
         }
 
-        if (current.Length >= MinimumRegexPrefilterLength)
-        {
-            best = PickLongerLiteral(best, current.ToString());
-        }
+        FlushCurrent();
 
         return best;
+    }
+
+    private static bool TryReadSafeExactQuantifier(
+        string pattern,
+        ref int index,
+        out int repeatCount)
+    {
+        repeatCount = 0;
+        var cursor = index + 1;
+
+        if (cursor >= pattern.Length || !char.IsAsciiDigit(pattern[cursor]))
+        {
+            return false;
+        }
+
+        var value = 0;
+        while (cursor < pattern.Length && char.IsAsciiDigit(pattern[cursor]))
+        {
+            value = checked((value * 10) + (pattern[cursor] - '0'));
+            cursor++;
+        }
+
+        if (cursor >= pattern.Length || pattern[cursor] != '}' || value <= 0)
+        {
+            return false;
+        }
+
+        repeatCount = value;
+        index = cursor;
+        return true;
     }
 
     private static bool TryTranslateEscapedLiteral(char escaped, out char literal)
@@ -748,15 +784,34 @@ internal sealed class SearchPattern
 
         private static bool MatchesCharClass(char character, SimpleRegexCharClass charClass)
         {
+            var isDigit = char.IsDigit(character);
+            var isWord = IsRegexWordCharacter(character);
+
             return charClass switch
             {
                 SimpleRegexCharClass.Any => true,
-                SimpleRegexCharClass.Digit => char.IsAsciiDigit(character),
-                SimpleRegexCharClass.NotDigit => !char.IsAsciiDigit(character),
-                SimpleRegexCharClass.Word => char.IsLetterOrDigit(character) || character == '_',
-                SimpleRegexCharClass.NotWord => !(char.IsLetterOrDigit(character) || character == '_'),
+                SimpleRegexCharClass.Digit => isDigit,
+                SimpleRegexCharClass.NotDigit => !isDigit,
+                SimpleRegexCharClass.Word => isWord,
+                SimpleRegexCharClass.NotWord => !isWord,
                 SimpleRegexCharClass.Whitespace => char.IsWhiteSpace(character),
                 SimpleRegexCharClass.NotWhitespace => !char.IsWhiteSpace(character),
+                _ => false
+            };
+        }
+
+        private static bool IsRegexWordCharacter(char character)
+        {
+            return CharUnicodeInfo.GetUnicodeCategory(character) switch
+            {
+                UnicodeCategory.UppercaseLetter => true,
+                UnicodeCategory.LowercaseLetter => true,
+                UnicodeCategory.TitlecaseLetter => true,
+                UnicodeCategory.ModifierLetter => true,
+                UnicodeCategory.OtherLetter => true,
+                UnicodeCategory.DecimalDigitNumber => true,
+                UnicodeCategory.NonSpacingMark => true,
+                UnicodeCategory.ConnectorPunctuation => true,
                 _ => false
             };
         }

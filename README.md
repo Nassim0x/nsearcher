@@ -59,6 +59,8 @@ dotnet run --project .\NSearcher.Cli -- "needle" . --stats
 
 ### Windows
 
+From source:
+
 PowerShell:
 
 ```powershell
@@ -89,6 +91,28 @@ Uninstall:
 
 ```powershell
 .\scripts\uninstall.ps1
+```
+
+### Release Bundle
+
+Build a portable Windows release bundle:
+
+```powershell
+.\scripts\package-release.ps1 -Version v1.0.1
+```
+
+This creates a clean release layout under `artifacts/releases/<version>/win-x64/` with:
+
+- a portable ZIP package
+- `SHA256SUMS.txt`
+- `package-manifest.json`
+- `RELEASE-NOTES.md`
+- an extracted bundle folder containing install/uninstall scripts and the published payload
+
+Install directly from the extracted bundle:
+
+```powershell
+.\artifacts\releases\<version>\win-x64\NSearcher-<version>-win-x64\install.ps1
 ```
 
 ## Feature Set
@@ -131,7 +155,7 @@ Core engine characteristics:
 
 ## Performance Snapshot
 
-Latest full benchmark validated on `2026-04-02`:
+Latest full benchmark validated on `2026-04-03`:
 
 - OS: `Windows 10.0.26200`
 - architecture: `x64`
@@ -144,28 +168,28 @@ Latest full benchmark validated on `2026-04-02`:
 
 | Metric | Value |
 | --- | ---: |
-| Geometric mean speedup | `4.01x` |
+| Geometric mean speedup | `4.17x` |
 | Best scenario | `regex-log-count` |
-| Best improvement | `+85.9%` |
-| Worst scenario | `literal-many-small-files` |
-| Worst improvement | `+61.9%` |
+| Best improvement | `+88.3%` |
+| Worst scenario | `literal-count-lines` |
+| Worst improvement | `+45.3%` |
 
 ### CLI vs external tools
 
 | Comparison | Scenarios won | Geometric mean speedup |
 | --- | ---: | ---: |
-| NSearcher vs `ripgrep` | `3/4` | `1.34x` |
-| NSearcher vs `grep` | `4/4` | `4.84x` |
-| NSearcher vs `ugrep` | `1/4` | `1.16x` |
+| NSearcher vs `ripgrep` | `3/4` | `1.44x` |
+| NSearcher vs `grep` | `4/4` | `5.29x` |
+| NSearcher vs `ugrep` | `1/4` | `1.26x` |
 
 ### Scenario breakdown
 
 | Scenario | vs `ripgrep` | vs `grep` | vs `ugrep` |
 | --- | ---: | ---: | ---: |
-| `literal-huge-presence` | `+66.5%` | `+92.2%` | `+63.1%` |
-| `literal-count-lines` | `-4.0%` | `+75.6%` | `-21.0%` |
-| `literal-many-small-files` | `+9.3%` | `+76.4%` | `-0.8%` |
-| `regex-log-count` | `+0.5%` | `+59.3%` | `-22.8%` |
+| `literal-huge-presence` | `+70.9%` | `+93.7%` | `+70.6%` |
+| `literal-count-lines` | `-3.6%` | `+75.7%` | `-16.1%` |
+| `literal-many-small-files` | `+12.7%` | `+77.3%` | `-7.3%` |
+| `regex-log-count` | `+12.1%` | `+63.2%` | `-9.1%` |
 
 Interpretation:
 
@@ -189,7 +213,6 @@ Focus on NSearcher vs ripgrep:
 Latest benchmark artifacts:
 
 - current report: `artifacts/benchmarks/latest.json`
-- timestamped report: `artifacts/benchmarks/benchmark-20260402-231758.json`
 - multi-tool chart: `artifacts/benchmarks/nsearcher-vs-ripgrep-vs-grep-vs-ugrep.svg`
 - ripgrep chart: `artifacts/benchmarks/nsearcher-vs-ripgrep.svg`
 
@@ -237,6 +260,14 @@ Each benchmark run writes:
 - `artifacts/benchmarks/benchmark-<timestamp>.json`
 - `artifacts/benchmarks/nsearcher-vs-ripgrep.svg` when ripgrep comparison is enabled
 - `artifacts/benchmarks/nsearcher-vs-ripgrep-vs-grep-vs-ugrep.svg` when CLI comparison is enabled
+
+## Release Automation
+
+GitHub Actions workflow:
+
+- `.github/workflows/release-package.yml`
+
+It builds the Windows package on demand or on `v*` tags, uploads the generated release artifacts, and publishes them to GitHub Releases on tag pushes.
 
 ## Build
 
