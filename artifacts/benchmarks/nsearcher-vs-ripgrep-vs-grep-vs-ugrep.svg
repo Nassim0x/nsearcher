@@ -1,0 +1,73 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="732" viewBox="0 0 1320 732" role="img" aria-labelledby="title desc">
+  <title id="title">NSearcher vs ripgrep vs grep vs ugrep benchmark comparison</title>
+  <desc id="desc">Grouped horizontal bar chart comparing NSearcher, ripgrep, grep and ugrep median execution times by scenario.</desc>
+  <rect width="1320" height="732" fill="#f7f4ee" />
+  <text x="40" y="52" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="700" fill="#1d3124">NSearcher vs ripgrep vs grep vs ugrep</text>
+  <text x="40" y="82" font-family="Segoe UI, Arial, sans-serif" font-size="16" fill="#496154">Median wall-clock time by scenario. Lower is better.</text>
+  <line x1="310.0" y1="106" x2="310.0" y2="678" stroke="#d4cec3" stroke-width="1" />
+  <text x="310.0" y="98" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#6d766f">0.0 ms</text>
+  <line x1="535.0" y1="106" x2="535.0" y2="678" stroke="#d4cec3" stroke-width="1" />
+  <text x="535.0" y="98" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#6d766f">250.5 ms</text>
+  <line x1="760.0" y1="106" x2="760.0" y2="678" stroke="#d4cec3" stroke-width="1" />
+  <text x="760.0" y="98" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#6d766f">501.1 ms</text>
+  <line x1="985.0" y1="106" x2="985.0" y2="678" stroke="#d4cec3" stroke-width="1" />
+  <text x="985.0" y="98" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#6d766f">751.6 ms</text>
+  <line x1="1210.0" y1="106" x2="1210.0" y2="678" stroke="#d4cec3" stroke-width="1" />
+  <text x="1210.0" y="98" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#6d766f">1002.1 ms</text>
+  <text x="40" y="142" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="600" fill="#223229">literal-huge-presence</text>
+  <text x="40" y="169" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#0b5d3a">NSearcher</text>
+  <rect x="310" y="156" width="70.3" height="18" rx="6" fill="#1f8f63" />
+  <text x="392.3" y="169" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#20543b">78.3 ms</text>
+  <text x="40" y="199" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#6b7280">ripgrep</text>
+  <rect x="310" y="186" width="209.9" height="18" rx="6" fill="#9aa3b2" />
+  <text x="531.9" y="199" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#384152">233.7 ms</text>
+  <text x="40" y="229" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#8a5e16">grep</text>
+  <rect x="310" y="216" width="900.0" height="18" rx="6" fill="#c8892c" />
+  <text x="1222.0" y="229" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#7a4f0a">1002.1 ms</text>
+  <text x="40" y="259" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#4e3aa0">ugrep</text>
+  <rect x="310" y="246" width="190.4" height="18" rx="6" fill="#7c63c9" />
+  <text x="512.4" y="259" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#43308a">212.0 ms</text>
+  <text x="40" y="246" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#4b5c52">Fastest: NSearcher by 63.1% vs ugrep</text>
+  <text x="40" y="278" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="600" fill="#223229">literal-count-lines</text>
+  <text x="40" y="305" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#0b5d3a">NSearcher</text>
+  <rect x="310" y="292" width="19.6" height="18" rx="6" fill="#1f8f63" />
+  <text x="341.6" y="305" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#20543b">21.9 ms</text>
+  <text x="40" y="335" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#6b7280">ripgrep</text>
+  <rect x="310" y="322" width="18.9" height="18" rx="6" fill="#9aa3b2" />
+  <text x="340.9" y="335" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#384152">21.0 ms</text>
+  <text x="40" y="365" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#8a5e16">grep</text>
+  <rect x="310" y="352" width="80.6" height="18" rx="6" fill="#c8892c" />
+  <text x="402.6" y="365" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#7a4f0a">89.8 ms</text>
+  <text x="40" y="395" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#4e3aa0">ugrep</text>
+  <rect x="310" y="382" width="16.2" height="18" rx="6" fill="#7c63c9" />
+  <text x="338.2" y="395" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#43308a">18.1 ms</text>
+  <text x="40" y="382" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#4b5c52">Fastest: ugrep by 14.0% vs ripgrep</text>
+  <text x="40" y="414" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="600" fill="#223229">literal-many-small-files</text>
+  <text x="40" y="441" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#0b5d3a">NSearcher</text>
+  <rect x="310" y="428" width="27.2" height="18" rx="6" fill="#1f8f63" />
+  <text x="349.2" y="441" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#20543b">30.3 ms</text>
+  <text x="40" y="471" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#6b7280">ripgrep</text>
+  <rect x="310" y="458" width="30.0" height="18" rx="6" fill="#9aa3b2" />
+  <text x="352.0" y="471" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#384152">33.4 ms</text>
+  <text x="40" y="501" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#8a5e16">grep</text>
+  <rect x="310" y="488" width="115.4" height="18" rx="6" fill="#c8892c" />
+  <text x="437.4" y="501" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#7a4f0a">128.5 ms</text>
+  <text x="40" y="531" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#4e3aa0">ugrep</text>
+  <rect x="310" y="518" width="27.0" height="18" rx="6" fill="#7c63c9" />
+  <text x="349.0" y="531" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#43308a">30.1 ms</text>
+  <text x="40" y="518" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#4b5c52">Fastest: ugrep by 0.8% vs NSearcher</text>
+  <text x="40" y="550" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="600" fill="#223229">regex-log-count</text>
+  <text x="40" y="577" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#0b5d3a">NSearcher</text>
+  <rect x="310" y="564" width="19.8" height="18" rx="6" fill="#1f8f63" />
+  <text x="341.8" y="577" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#20543b">22.0 ms</text>
+  <text x="40" y="607" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#6b7280">ripgrep</text>
+  <rect x="310" y="594" width="19.9" height="18" rx="6" fill="#9aa3b2" />
+  <text x="341.9" y="607" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#384152">22.1 ms</text>
+  <text x="40" y="637" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#8a5e16">grep</text>
+  <rect x="310" y="624" width="48.7" height="18" rx="6" fill="#c8892c" />
+  <text x="370.7" y="637" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#7a4f0a">54.2 ms</text>
+  <text x="40" y="667" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#4e3aa0">ugrep</text>
+  <rect x="310" y="654" width="16.1" height="18" rx="6" fill="#7c63c9" />
+  <text x="338.1" y="667" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#43308a">17.9 ms</text>
+  <text x="40" y="654" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#4b5c52">Fastest: ugrep by 18.5% vs NSearcher</text>
+</svg>

@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="NSearcher.Benchmarks/NSearcher.Benchmarks.csproj" />
+  <Project Path="NSearcher.Client/NSearcher.Client.csproj" />
+  <Project Path="NSearcher.Cli/NSearcher.Cli.csproj" />
+  <Project Path="NSearcher.Core.Tests/NSearcher.Core.Tests.csproj" />
+  <Project Path="NSearcher.Core/NSearcher.Core.csproj" />
+</Solution>

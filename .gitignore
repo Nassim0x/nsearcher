@@ -1,0 +1,29 @@
+# Build outputs
+bin/
+obj/
+
+# User / tool state
+.vs/
+.tools/
+*.user
+*.suo
+*.ncb
+*.opendb
+*.VC.db
+
+# Local benchmark / profiling scratch data
+literal-many-small-files/
+
+# Publish and profiling artifacts
+artifacts/native-launcher/
+artifacts/publish/
+artifacts/publish-aot/
+artifacts/profiling/
+
+# Benchmark artifacts: keep only the curated snapshot files referenced by the README
+artifacts/benchmarks/*.json
+artifacts/benchmarks/*.svg
+!artifacts/benchmarks/latest.json
+!artifacts/benchmarks/benchmark-20260402-231758.json
+!artifacts/benchmarks/nsearcher-vs-ripgrep.svg
+!artifacts/benchmarks/nsearcher-vs-ripgrep-vs-grep-vs-ugrep.svg

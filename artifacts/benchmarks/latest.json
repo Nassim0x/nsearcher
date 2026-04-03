@@ -1,0 +1,626 @@
+{
+  "GeneratedAtUtc": "2026-04-02T23:17:58.9796473+00:00",
+  "Host": {
+    "OsDescription": "Microsoft Windows 10.0.26200",
+    "ProcessArchitecture": "X64",
+    "FrameworkDescription": ".NET 10.0.5",
+    "LogicalProcessors": 12
+  },
+  "WarmupRuns": 1,
+  "MeasuredRuns": 6,
+  "Aggregate": {
+    "ScenarioCount": 4,
+    "BestScenario": "regex-log-count",
+    "BestImprovementPercent": 85.88288515576744,
+    "WorstScenario": "literal-many-small-files",
+    "WorstImprovementPercent": 61.93538256638441,
+    "MedianImprovementPercent": 73.10068811688723,
+    "GeometricMeanSpeedup": 4.012341148519337
+  },
+  "RipgrepComparison": {
+    "ScenarioCount": 4,
+    "NSearcherWins": 3,
+    "RipgrepWins": 1,
+    "NearTies": 0,
+    "MedianAdvantagePercent": 4.8933155759448885,
+    "GeometricMeanSpeedup": 1.3354149288039627
+  },
+  "GrepComparison": {
+    "ScenarioCount": 4,
+    "NSearcherWins": 4,
+    "GrepWins": 0,
+    "NearTies": 0,
+    "MedianAdvantagePercent": 76.02285197785648,
+    "GeometricMeanSpeedup": 4.837645288027527
+  },
+  "UgrepComparison": {
+    "ScenarioCount": 4,
+    "NSearcherWins": 1,
+    "UgrepWins": 3,
+    "NearTies": 0,
+    "MedianAdvantagePercent": -10.90745269955157,
+    "GeometricMeanSpeedup": 1.1597284128317729
+  },
+  "Scenarios": [
+    {
+      "Name": "literal-huge-presence",
+      "Description": "Rare literal in huge multilingual UTF-8 documents with files-with-matches mode",
+      "SearchMode": {
+        "PatternKind": "literal",
+        "Mode": "files-with-matches",
+        "CaseMode": "Sensitive",
+        "BeforeContext": 0,
+        "AfterContext": 0
+      },
+      "Corpus": {
+        "FileCount": 4,
+        "MatchingFiles": 1,
+        "TotalBytes": 725599964
+      },
+      "Baseline": {
+        "RunsMs": [
+          507.381,
+          233.075,
+          229.2142,
+          223.3168,
+          216.0479,
+          215.412
+        ],
+        "LastSummary": {
+          "FilesEnumerated": 4,
+          "FilesSearched": 4,
+          "FilesMatched": 1,
+          "MatchLines": 1,
+          "MatchCount": 1,
+          "BytesScanned": 725599964,
+          "FilesSkippedHidden": 0,
+          "FilesSkippedExcluded": 0,
+          "FilesSkippedBinary": 0,
+          "MissingPaths": 0,
+          "Errors": 0,
+          "LimitReached": false,
+          "Duration": "00:00:00.2153991",
+          "RuntimeProfile": {
+            "WorkerCount": 12,
+            "StreamBufferSize": 131072,
+            "TotalAvailableMemoryBytes": 0,
+            "AutoTuned": false,
+            "UsedFastLiteralFileMode": false
+          }
+        }
+      },
+      "Optimized": {
+        "RunsMs": [
+          53.7552,
+          64.6956,
+          64.4679,
+          57.3161,
+          50.3522,
+          45.6998
+        ],
+        "LastSummary": {
+          "FilesEnumerated": 4,
+          "FilesSearched": 4,
+          "FilesMatched": 1,
+          "MatchLines": 1,
+          "MatchCount": 1,
+          "BytesScanned": 725599964,
+          "FilesSkippedHidden": 0,
+          "FilesSkippedExcluded": 0,
+          "FilesSkippedBinary": 0,
+          "MissingPaths": 0,
+          "Errors": 0,
+          "LimitReached": false,
+          "Duration": "00:00:00.0456881",
+          "RuntimeProfile": {
+            "WorkerCount": 12,
+            "StreamBufferSize": 4194304,
+            "TotalAvailableMemoryBytes": 33950130176,
+            "AutoTuned": true,
+            "UsedFastLiteralFileMode": true
+          }
+        }
+      },
+      "BaselineMedianMs": 226.2655,
+      "OptimizedMedianMs": 55.535650000000004,
+      "ImprovementPercent": 75.4555378526554,
+      "SpeedupFactor": 4.074238799761955,
+      "CliComparison": {
+        "ScenarioName": "literal-huge-presence",
+        "NSearcherPath": "C:\\Users\\dontb\\AppData\\Local\\Programs\\NSearcher\\NSearcher.exe",
+        "RipgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\OpenAI\\Codex\\bin\\rg.exe",
+        "GrepPath": "C:\\Program Files\\Git\\usr\\bin\\grep.exe",
+        "UgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Microsoft\\WinGet\\Links\\ugrep.exe",
+        "NSearcher": {
+          "ToolName": "NSearcher",
+          "RunsMs": [
+            76.0229,
+            67.6272,
+            64.4518,
+            85.5725,
+            99.4525,
+            80.4862
+          ],
+          "MedianMs": 78.25455
+        },
+        "Ripgrep": {
+          "ToolName": "ripgrep",
+          "RunsMs": [
+            269.7701,
+            248.2419,
+            218.7161,
+            228.1455,
+            230.7243,
+            236.6139
+          ],
+          "MedianMs": 233.66910000000001
+        },
+        "Grep": {
+          "ToolName": "grep",
+          "RunsMs": [
+            983.0035,
+            952.3081,
+            1024.4882,
+            1021.2083,
+            1048.253,
+            957.2293
+          ],
+          "MedianMs": 1002.1059
+        },
+        "Ugrep": {
+          "ToolName": "ugrep",
+          "RunsMs": [
+            213.5682,
+            215.1183,
+            210.4615,
+            208.0661,
+            214.6671,
+            208.7647
+          ],
+          "MedianMs": 212.01485
+        },
+        "NSearcherAdvantagePercent": 66.51052706583798,
+        "SpeedupFactor": 2.9860129538793596,
+        "NSearcherVsGrepAdvantagePercent": 92.19098999417128,
+        "GrepSpeedupFactor": 12.805720561935377,
+        "NSearcherVsUgrepAdvantagePercent": 63.090061851799526,
+        "UgrepSpeedupFactor": 2.7092974146551225
+      }
+    },
+    {
+      "Name": "literal-count-lines",
+      "Description": "Rare literal in large code-like line corpus with count-only mode",
+      "SearchMode": {
+        "PatternKind": "literal",
+        "Mode": "count-only",
+        "CaseMode": "Sensitive",
+        "BeforeContext": 0,
+        "AfterContext": 0
+      },
+      "Corpus": {
+        "FileCount": 48,
+        "MatchingFiles": 6,
+        "TotalBytes": 86016360
+      },
+      "Baseline": {
+        "RunsMs": [
+          17.8435,
+          17.1393,
+          17.8157,
+          17.0744,
+          18.326,
+          19.7402
+        ],
+        "LastSummary": {
+          "FilesEnumerated": 48,
+          "FilesSearched": 48,
+          "FilesMatched": 6,
+          "MatchLines": 12,
+          "MatchCount": 18,
+          "BytesScanned": 86016360,
+          "FilesSkippedHidden": 0,
+          "FilesSkippedExcluded": 0,
+          "FilesSkippedBinary": 0,
+          "MissingPaths": 0,
+          "Errors": 0,
+          "LimitReached": false,
+          "Duration": "00:00:00.0197282",
+          "RuntimeProfile": {
+            "WorkerCount": 12,
+            "StreamBufferSize": 131072,
+            "TotalAvailableMemoryBytes": 0,
+            "AutoTuned": false,
+            "UsedFastLiteralFileMode": false
+          }
+        }
+      },
+      "Optimized": {
+        "RunsMs": [
+          5.1277,
+          5.0586,
+          5.3041,
+          5.3202,
+          5.0134,
+          5.6135
+        ],
+        "LastSummary": {
+          "FilesEnumerated": 48,
+          "FilesSearched": 48,
+          "FilesMatched": 6,
+          "MatchLines": 12,
+          "MatchCount": 18,
+          "BytesScanned": 86016360,
+          "FilesSkippedHidden": 0,
+          "FilesSkippedExcluded": 0,
+          "FilesSkippedBinary": 0,
+          "MissingPaths": 0,
+          "Errors": 0,
+          "LimitReached": false,
+          "Duration": "00:00:00.0056052",
+          "RuntimeProfile": {
+            "WorkerCount": 8,
+            "StreamBufferSize": 1048576,
+            "TotalAvailableMemoryBytes": 33950130176,
+            "AutoTuned": true,
+            "UsedFastLiteralFileMode": true
+          }
+        }
+      },
+      "BaselineMedianMs": 17.8296,
+      "OptimizedMedianMs": 5.2158999999999995,
+      "ImprovementPercent": 70.74583838111904,
+      "SpeedupFactor": 3.418317068962212,
+      "CliComparison": {
+        "ScenarioName": "literal-count-lines",
+        "NSearcherPath": "C:\\Users\\dontb\\AppData\\Local\\Programs\\NSearcher\\NSearcher.exe",
+        "RipgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\OpenAI\\Codex\\bin\\rg.exe",
+        "GrepPath": "C:\\Program Files\\Git\\usr\\bin\\grep.exe",
+        "UgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Microsoft\\WinGet\\Links\\ugrep.exe",
+        "NSearcher": {
+          "ToolName": "NSearcher",
+          "RunsMs": [
+            22.4211,
+            21.944,
+            22.6319,
+            21.7933,
+            20.8962,
+            20.2872
+          ],
+          "MedianMs": 21.86865
+        },
+        "Ripgrep": {
+          "ToolName": "ripgrep",
+          "RunsMs": [
+            22.2268,
+            20.4228,
+            20.5906,
+            21.4529,
+            20.4219,
+            22.1208
+          ],
+          "MedianMs": 21.021749999999997
+        },
+        "Grep": {
+          "ToolName": "grep",
+          "RunsMs": [
+            88.3191,
+            88.1716,
+            89.0277,
+            93.9479,
+            93.7181,
+            90.5581
+          ],
+          "MedianMs": 89.7929
+        },
+        "Ugrep": {
+          "ToolName": "ugrep",
+          "RunsMs": [
+            20.4152,
+            18.0004,
+            17.9784,
+            18.3097,
+            17.7937,
+            18.1544
+          ],
+          "MedianMs": 18.077399999999997
+        },
+        "NSearcherAdvantagePercent": -4.028684576688438,
+        "SpeedupFactor": 0.9612733296294009,
+        "NSearcherVsGrepAdvantagePercent": 75.64545749162795,
+        "GrepSpeedupFactor": 4.106010201818585,
+        "NSearcherVsUgrepAdvantagePercent": -20.972319028178845,
+        "UgrepSpeedupFactor": 0.8266353890157828
+      }
+    },
+    {
+      "Name": "literal-many-small-files",
+      "Description": "Recursive literal search across many small nested files",
+      "SearchMode": {
+        "PatternKind": "literal",
+        "Mode": "files-with-matches",
+        "CaseMode": "Sensitive",
+        "BeforeContext": 0,
+        "AfterContext": 0
+      },
+      "Corpus": {
+        "FileCount": 1500,
+        "MatchingFiles": 120,
+        "TotalBytes": 15662400
+      },
+      "Baseline": {
+        "RunsMs": [
+          48.6407,
+          50.0908,
+          55.3029,
+          54.561,
+          53.444,
+          52.2736
+        ],
+        "LastSummary": {
+          "FilesEnumerated": 1500,
+          "FilesSearched": 1500,
+          "FilesMatched": 120,
+          "MatchLines": 120,
+          "MatchCount": 120,
+          "BytesScanned": 15662400,
+          "FilesSkippedHidden": 0,
+          "FilesSkippedExcluded": 0,
+          "FilesSkippedBinary": 0,
+          "MissingPaths": 0,
+          "Errors": 0,
+          "LimitReached": false,
+          "Duration": "00:00:00.0522595",
+          "RuntimeProfile": {
+            "WorkerCount": 12,
+            "StreamBufferSize": 131072,
+            "TotalAvailableMemoryBytes": 0,
+            "AutoTuned": false,
+            "UsedFastLiteralFileMode": false
+          }
+        }
+      },
+      "Optimized": {
+        "RunsMs": [
+          18.3283,
+          20.6263,
+          21.7161,
+          22.613,
+          19.6147,
+          16.3188
+        ],
+        "LastSummary": {
+          "FilesEnumerated": 1500,
+          "FilesSearched": 1500,
+          "FilesMatched": 120,
+          "MatchLines": 120,
+          "MatchCount": 120,
+          "BytesScanned": 15662400,
+          "FilesSkippedHidden": 0,
+          "FilesSkippedExcluded": 0,
+          "FilesSkippedBinary": 0,
+          "MissingPaths": 0,
+          "Errors": 0,
+          "LimitReached": false,
+          "Duration": "00:00:00.0163081",
+          "RuntimeProfile": {
+            "WorkerCount": 12,
+            "StreamBufferSize": 262144,
+            "TotalAvailableMemoryBytes": 33950130176,
+            "AutoTuned": true,
+            "UsedFastLiteralFileMode": true
+          }
+        }
+      },
+      "BaselineMedianMs": 52.8588,
+      "OptimizedMedianMs": 20.1205,
+      "ImprovementPercent": 61.93538256638441,
+      "SpeedupFactor": 2.627111652294923,
+      "CliComparison": {
+        "ScenarioName": "literal-many-small-files",
+        "NSearcherPath": "C:\\Users\\dontb\\AppData\\Local\\Programs\\NSearcher\\NSearcher.exe",
+        "RipgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\OpenAI\\Codex\\bin\\rg.exe",
+        "GrepPath": "C:\\Program Files\\Git\\usr\\bin\\grep.exe",
+        "UgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Microsoft\\WinGet\\Links\\ugrep.exe",
+        "NSearcher": {
+          "ToolName": "NSearcher",
+          "RunsMs": [
+            33.9273,
+            30.3879,
+            29.5673,
+            30.2431,
+            31.5304,
+            30.1557
+          ],
+          "MedianMs": 30.3155
+        },
+        "Ripgrep": {
+          "ToolName": "ripgrep",
+          "RunsMs": [
+            33.3629,
+            34.2522,
+            33.511,
+            31.428,
+            30.7709,
+            33.5694
+          ],
+          "MedianMs": 33.43695
+        },
+        "Grep": {
+          "ToolName": "grep",
+          "RunsMs": [
+            124.8348,
+            129.0743,
+            129.6739,
+            133.528,
+            127.8394,
+            123.4248
+          ],
+          "MedianMs": 128.45685
+        },
+        "Ugrep": {
+          "ToolName": "ugrep",
+          "RunsMs": [
+            30.4731,
+            31.5082,
+            29.6513,
+            29.2411,
+            33.5161,
+            29.0158
+          ],
+          "MedianMs": 30.062199999999997
+        },
+        "NSearcherAdvantagePercent": 9.335331123203531,
+        "SpeedupFactor": 1.1029654797051014,
+        "NSearcherVsGrepAdvantagePercent": 76.40024646408501,
+        "GrepSpeedupFactor": 4.237332387722453,
+        "NSearcherVsUgrepAdvantagePercent": -0.8425863709242936,
+        "UgrepSpeedupFactor": 0.9916445382725008
+      }
+    },
+    {
+      "Name": "regex-log-count",
+      "Description": "Regex search over structured log files with count-only mode",
+      "SearchMode": {
+        "PatternKind": "regex",
+        "Mode": "count-only",
+        "CaseMode": "Sensitive",
+        "BeforeContext": 0,
+        "AfterContext": 0
+      },
+      "Corpus": {
+        "FileCount": 24,
+        "MatchingFiles": 4,
+        "TotalBytes": 35424272
+      },
+      "Baseline": {
+        "RunsMs": [
+          28.6003,
+          28.4299,
+          28.5262,
+          29.4611,
+          28.8732,
+          29.9014
+        ],
+        "LastSummary": {
+          "FilesEnumerated": 24,
+          "FilesSearched": 24,
+          "FilesMatched": 4,
+          "MatchLines": 8,
+          "MatchCount": 8,
+          "BytesScanned": 35424272,
+          "FilesSkippedHidden": 0,
+          "FilesSkippedExcluded": 0,
+          "FilesSkippedBinary": 0,
+          "MissingPaths": 0,
+          "Errors": 0,
+          "LimitReached": false,
+          "Duration": "00:00:00.0297916",
+          "RuntimeProfile": {
+            "WorkerCount": 12,
+            "StreamBufferSize": 131072,
+            "TotalAvailableMemoryBytes": 0,
+            "AutoTuned": false,
+            "UsedFastLiteralFileMode": false
+          }
+        }
+      },
+      "Optimized": {
+        "RunsMs": [
+          4.4262,
+          4.2447,
+          3.722,
+          3.9985,
+          4.1151,
+          3.9722
+        ],
+        "LastSummary": {
+          "FilesEnumerated": 24,
+          "FilesSearched": 24,
+          "FilesMatched": 4,
+          "MatchLines": 8,
+          "MatchCount": 8,
+          "BytesScanned": 35424272,
+          "FilesSkippedHidden": 0,
+          "FilesSkippedExcluded": 0,
+          "FilesSkippedBinary": 0,
+          "MissingPaths": 0,
+          "Errors": 0,
+          "LimitReached": false,
+          "Duration": "00:00:00.0038313",
+          "RuntimeProfile": {
+            "WorkerCount": 6,
+            "StreamBufferSize": 524288,
+            "TotalAvailableMemoryBytes": 33950130176,
+            "AutoTuned": true,
+            "UsedFastLiteralFileMode": false
+          }
+        }
+      },
+      "BaselineMedianMs": 28.73675,
+      "OptimizedMedianMs": 4.0568,
+      "ImprovementPercent": 85.88288515576744,
+      "SpeedupFactor": 7.083600374679551,
+      "CliComparison": {
+        "ScenarioName": "regex-log-count",
+        "NSearcherPath": "C:\\Users\\dontb\\AppData\\Local\\Programs\\NSearcher\\NSearcher.exe",
+        "RipgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\OpenAI\\Codex\\bin\\rg.exe",
+        "GrepPath": "C:\\Program Files\\Git\\usr\\bin\\grep.exe",
+        "UgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Microsoft\\WinGet\\Links\\ugrep.exe",
+        "NSearcher": {
+          "ToolName": "NSearcher",
+          "RunsMs": [
+            22.1462,
+            21.1518,
+            21.6524,
+            22.4213,
+            21.9261,
+            23.2419
+          ],
+          "MedianMs": 22.03615
+        },
+        "Ripgrep": {
+          "ToolName": "ripgrep",
+          "RunsMs": [
+            22.3715,
+            21.9919,
+            21.2695,
+            22.4338,
+            22.0394,
+            22.2327
+          ],
+          "MedianMs": 22.13605
+        },
+        "Grep": {
+          "ToolName": "grep",
+          "RunsMs": [
+            55.3038,
+            55.3349,
+            54.0335,
+            53.7974,
+            53.7944,
+            54.3056
+          ],
+          "MedianMs": 54.16955
+        },
+        "Ugrep": {
+          "ToolName": "ugrep",
+          "RunsMs": [
+            17.4076,
+            22.3326,
+            17.7114,
+            17.8712,
+            18.0263,
+            18.0639
+          ],
+          "MedianMs": 17.94875
+        },
+        "NSearcherAdvantagePercent": 0.4513000286862455,
+        "SpeedupFactor": 1.004533459792205,
+        "NSearcherVsGrepAdvantagePercent": 59.32004234851499,
+        "GrepSpeedupFactor": 2.458212981850278,
+        "NSearcherVsUgrepAdvantagePercent": -22.77261647747057,
+        "UgrepSpeedupFactor": 0.8145138783317413
+      }
+    }
+  ]
+}
