@@ -92,6 +92,7 @@ function Write-ReleaseNotes {
         [string]$Path,
         [string]$Version,
         [string]$Runtime,
+        [string]$InstallerAssetName,
         [string]$BundleArchiveName,
         [psobject]$PublishResult,
         [psobject]$BenchmarkSnapshot
@@ -111,6 +112,7 @@ function Write-ReleaseNotes {
     $lines.Add('')
     $lines.Add('## Release Artifacts')
     $lines.Add('')
+    $lines.Add(('- `{0}`' -f $InstallerAssetName))
     $lines.Add(('- `{0}`' -f $BundleArchiveName))
     $lines.Add('- `SHA256SUMS.txt` for release asset verification')
     $lines.Add('- `package-manifest.json`')
@@ -124,6 +126,12 @@ function Write-ReleaseNotes {
     $lines.Add(('- generated at: `{0}`' -f [DateTimeOffset]::UtcNow.ToString('u')))
     $lines.Add('')
     $lines.Add('## Installation')
+    $lines.Add('')
+    $lines.Add('Recommended:')
+    $lines.Add('')
+    $lines.Add('```powershell')
+    $lines.Add(('.\{0}' -f $InstallerAssetName))
+    $lines.Add('```')
     $lines.Add('')
     $lines.Add('PowerShell:')
     $lines.Add('')
@@ -223,15 +231,21 @@ $releaseDirectory = Join-Path (Join-Path $OutputRoot $safeVersion) $Runtime
 $bundleName = "NSearcher-$safeVersion-$Runtime"
 $bundleRoot = Join-Path $releaseDirectory $bundleName
 $payloadRoot = Join-Path $bundleRoot 'payload'
+$buildRoot = Join-Path $releaseDirectory 'build'
 $releaseNotesPath = Join-Path $releaseDirectory 'RELEASE-NOTES.md'
 $manifestPath = Join-Path $releaseDirectory 'package-manifest.json'
 $zipPath = Join-Path $releaseDirectory "$bundleName.zip"
+$installerAssetName = "NSearcher-Setup-$safeVersion-$Runtime.exe"
+$installerAssetPath = Join-Path $releaseDirectory $installerAssetName
+$payloadZipPath = Join-Path $buildRoot "nsearcher-payload-$safeVersion-$Runtime.zip"
+$installerPublishDir = Join-Path $buildRoot 'installer'
 $packagingRoot = Join-Path $projectRoot 'packaging\windows'
 
 Write-Step "Packaging NSearcher $resolvedVersion for $Runtime"
 New-Item -ItemType Directory -Force -Path $releaseDirectory | Out-Null
 Initialize-Directory -Path $releaseDirectory
 New-Item -ItemType Directory -Force -Path $bundleRoot | Out-Null
+New-Item -ItemType Directory -Force -Path $buildRoot | Out-Null
 
 $publishResult = Publish-NSearcher `
     -ProjectRoot $projectRoot `
@@ -241,6 +255,24 @@ $publishResult = Publish-NSearcher `
     -Version $resolvedVersion
 
 Copy-NSearcherInstallLayout -PublishResult $publishResult -Destination $payloadRoot -ExcludeSymbols
+if (Test-Path $payloadZipPath) {
+    Remove-Item $payloadZipPath -Force
+}
+Compress-Archive -Path (Join-Path $payloadRoot '*') -DestinationPath $payloadZipPath -CompressionLevel Optimal
+
+$installerPublishResult = Publish-NSearcherInstaller `
+    -ProjectRoot $projectRoot `
+    -Configuration $Configuration `
+    -Runtime $Runtime `
+    -DisableAot:$DisableAot `
+    -Version $resolvedVersion `
+    -PayloadZipPath $payloadZipPath `
+    -OutputDir $installerPublishDir
+
+Copy-Item -Path $installerPublishResult.ExePath -Destination $installerAssetPath -Force
+if (Test-Path $buildRoot) {
+    Remove-Item -Path $buildRoot -Recurse -Force
+}
 Copy-Item -Path (Join-Path $packagingRoot '*') -Destination $bundleRoot -Recurse -Force
 Copy-Item -Path (Join-Path $projectRoot 'LICENSE') -Destination (Join-Path $bundleRoot 'LICENSE') -Force
 Copy-Item -Path (Join-Path $projectRoot 'README.md') -Destination (Join-Path $bundleRoot 'README.md') -Force
@@ -250,6 +282,7 @@ Write-ReleaseNotes `
     -Path (Join-Path $bundleRoot 'RELEASE-NOTES.md') `
     -Version $resolvedVersion `
     -Runtime $Runtime `
+    -InstallerAssetName $installerAssetName `
     -BundleArchiveName (Split-Path -Leaf $zipPath) `
     -PublishResult $publishResult `
     -BenchmarkSnapshot $benchmarkSnapshot
@@ -270,9 +303,10 @@ if (Test-Path $zipPath) {
 }
 
 Compress-Archive -Path $bundleRoot -DestinationPath $zipPath -CompressionLevel Optimal
-Write-Sha256Sums -ReleaseDirectory $releaseDirectory -Paths @($zipPath, $manifestPath, $releaseNotesPath)
+Write-Sha256Sums -ReleaseDirectory $releaseDirectory -Paths @($installerAssetPath, $zipPath, $manifestPath, $releaseNotesPath)
 
 Write-Step 'Package complete'
+Write-Host "Installer EXE: $installerAssetPath" -ForegroundColor Green
 Write-Host "Bundle directory: $bundleRoot" -ForegroundColor Green
 Write-Host "ZIP package: $zipPath" -ForegroundColor Green
 Write-Host "Release notes: $releaseNotesPath" -ForegroundColor Green

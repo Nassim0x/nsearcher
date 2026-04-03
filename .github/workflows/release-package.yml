@@ -60,6 +60,7 @@ jobs:
         with:
           body_path: artifacts/releases/${{ github.ref_name }}/win-x64/RELEASE-NOTES.md
           files: |
+            artifacts/releases/${{ github.ref_name }}/win-x64/*.exe
             artifacts/releases/${{ github.ref_name }}/win-x64/*.zip
             artifacts/releases/${{ github.ref_name }}/win-x64/*.txt
             artifacts/releases/${{ github.ref_name }}/win-x64/*.json

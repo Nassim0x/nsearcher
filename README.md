@@ -103,16 +103,29 @@ Build a portable Windows release bundle:
 
 This creates a clean release layout under `artifacts/releases/<version>/win-x64/` with:
 
+- a standalone Windows installer `.exe`
 - a portable ZIP package
 - `SHA256SUMS.txt`
 - `package-manifest.json`
 - `RELEASE-NOTES.md`
 - an extracted bundle folder containing install/uninstall scripts and the published payload
 
+Run the standalone installer:
+
+```powershell
+.\artifacts\releases\<version>\win-x64\NSearcher-Setup-<version>-win-x64.exe
+```
+
 Install directly from the extracted bundle:
 
 ```powershell
 .\artifacts\releases\<version>\win-x64\NSearcher-<version>-win-x64\install.ps1
+```
+
+Silent install for automation or package managers:
+
+```powershell
+.\artifacts\releases\<version>\win-x64\NSearcher-Setup-<version>-win-x64.exe /quiet
 ```
 
 ## Feature Set

@@ -266,3 +266,87 @@ function Publish-NSearcher {
         LauncherPath = $launcherPath
     }
 }
+
+function Publish-NSearcherInstaller {
+    param(
+        [string]$ProjectRoot,
+        [string]$Configuration = "Release",
+        [string]$Runtime = "win-x64",
+        [string]$Version,
+        [string]$PayloadZipPath,
+        [string]$OutputDir,
+        [switch]$DisableAot
+    )
+
+    if ([string]::IsNullOrWhiteSpace($PayloadZipPath) -or -not (Test-Path $PayloadZipPath)) {
+        throw "Installer payload zip not found: $PayloadZipPath"
+    }
+
+    if ([string]::IsNullOrWhiteSpace($OutputDir)) {
+        $OutputDir = Join-Path (Join-Path $ProjectRoot 'artifacts') 'installer'
+    }
+
+    $installerProjectFile = Join-Path $ProjectRoot 'NSearcher.Installer\NSearcher.Installer.csproj'
+    $publishProperties = Get-PublishVersionProperties -Version $Version
+    $publishProperties += "-p:PayloadZipPath=$PayloadZipPath"
+    $installerPublished = $false
+    $publishMode = 'managed-single-file'
+
+    if (-not $DisableAot) {
+        Write-Step 'Publishing NSearcher installer (Native AOT if supported)'
+        $installerPublished = Invoke-DotNetPublish -Arguments (@(
+            'publish',
+            $installerProjectFile,
+            '-c', $Configuration,
+            '-r', $Runtime,
+            '-p:PublishAot=true',
+            '-p:PublishTrimmed=true',
+            '-p:InvariantGlobalization=true',
+            '-p:IlcUseEnvironmentalTools=true',
+            '-p:StripSymbols=true',
+            '-o', $OutputDir
+        ) + $publishProperties) -UseVcEnvironment
+
+        if ($installerPublished) {
+            $publishMode = 'native-aot'
+        }
+        else {
+            Write-Host 'Native AOT installer publish failed on this machine. Falling back to managed single-file publish.' -ForegroundColor Yellow
+        }
+    }
+
+    if (-not $installerPublished) {
+        Write-Step 'Publishing NSearcher installer (managed single-file fallback)'
+        $installerPublished = Invoke-DotNetPublish -Arguments (@(
+            'publish',
+            $installerProjectFile,
+            '-c', $Configuration,
+            '-r', $Runtime,
+            '--self-contained', 'true',
+            '-p:PublishSingleFile=true',
+            '-p:EnableCompressionInSingleFile=true',
+            '-p:PublishTrimmed=true',
+            '-p:InvariantGlobalization=true',
+            '-o', $OutputDir
+        ) + $publishProperties)
+    }
+
+    if (-not $installerPublished) {
+        throw 'Installer publish failed.'
+    }
+
+    $exePath = Join-Path $OutputDir 'NSearcher.Setup.exe'
+    if (-not (Test-Path $exePath)) {
+        throw "Installer executable was not produced at $exePath"
+    }
+
+    return [pscustomobject]@{
+        ProjectRoot = $ProjectRoot
+        Runtime = $Runtime
+        Configuration = $Configuration
+        Version = $Version
+        PublishMode = $publishMode
+        OutputDir = $OutputDir
+        ExePath = $exePath
+    }
+}
