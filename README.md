@@ -187,7 +187,7 @@ Core engine characteristics:
 
 ## Performance Snapshot
 
-Latest full benchmark validated on `2026-04-03`:
+Latest full benchmark validated on `2026-04-08`:
 
 - OS: `Windows 10.0.26200`
 - architecture: `x64`
@@ -195,40 +195,43 @@ Latest full benchmark validated on `2026-04-03`:
 - logical processors: `12`
 - protocol: `1` warmup + `6` measured runs per scenario
 - source report: `artifacts/benchmarks/latest.json`
+- timestamped report: `artifacts/benchmarks/benchmark-20260408-141405.json`
+
+This snapshot reflects the latest round of engine and CLI work. The most visible progress is that NSearcher now wins `4/4` scenarios against `ripgrep` on this machine, stays decisively ahead of classic `grep`, and is globally ahead of `ugrep` in geometric mean speedup while still losing some short, CLI-heavy cases.
 
 ### Engine vs internal baseline
 
 | Metric | Value |
 | --- | ---: |
-| Geometric mean speedup | `4.17x` |
+| Geometric mean speedup | `4.44x` |
 | Best scenario | `regex-log-count` |
-| Best improvement | `+88.3%` |
-| Worst scenario | `literal-count-lines` |
-| Worst improvement | `+45.3%` |
+| Best improvement | `+87.0%` |
+| Worst scenario | `literal-many-small-files` |
+| Worst improvement | `+71.1%` |
 
 ### CLI vs external tools
 
 | Comparison | Scenarios won | Geometric mean speedup |
 | --- | ---: | ---: |
-| NSearcher vs `ripgrep` | `3/4` | `1.44x` |
-| NSearcher vs `grep` | `4/4` | `5.29x` |
-| NSearcher vs `ugrep` | `1/4` | `1.26x` |
+| NSearcher vs `ripgrep` | `4/4` | `1.42x` |
+| NSearcher vs `grep` | `4/4` | `5.34x` |
+| NSearcher vs `ugrep` | `2/4` | `1.25x` |
 
 ### Scenario breakdown
 
 | Scenario | vs `ripgrep` | vs `grep` | vs `ugrep` |
 | --- | ---: | ---: | ---: |
-| `literal-huge-presence` | `+70.9%` | `+93.7%` | `+70.6%` |
-| `literal-count-lines` | `-3.6%` | `+75.7%` | `-16.1%` |
-| `literal-many-small-files` | `+12.7%` | `+77.3%` | `-7.3%` |
-| `regex-log-count` | `+12.1%` | `+63.2%` | `-9.1%` |
+| `literal-huge-presence` | `+69.2%` | `+93.4%` | `+70.5%` |
+| `literal-count-lines` | `+3.9%` | `+75.8%` | `-25.5%` |
+| `literal-many-small-files` | `+6.8%` | `+78.1%` | `+4.2%` |
+| `regex-log-count` | `+11.9%` | `+64.9%` | `-16.0%` |
 
 Interpretation:
 
 - NSearcher is already very strong on heavy literal scanning workloads.
 - NSearcher is clearly ahead of classic `grep` on this suite.
-- NSearcher is globally ahead of `ripgrep` on this suite.
-- `ugrep` still leads on several short, CLI-heavy scenarios.
+- NSearcher is ahead of `ripgrep` on all four scenarios in this run.
+- NSearcher is globally ahead of `ugrep`, but `ugrep` still leads on some short, CLI-heavy scenarios.
 
 That last point matters. NSearcher is competitive, but this README does not claim universal dominance across all machines and all workloads.
 
@@ -245,6 +248,7 @@ Focus on NSearcher vs ripgrep:
 Latest benchmark artifacts:
 
 - current report: `artifacts/benchmarks/latest.json`
+- latest timestamped report: `artifacts/benchmarks/benchmark-20260408-141405.json`
 - multi-tool chart: `artifacts/benchmarks/nsearcher-vs-ripgrep-vs-grep-vs-ugrep.svg`
 - ripgrep chart: `artifacts/benchmarks/nsearcher-vs-ripgrep.svg`
 
@@ -276,14 +280,8 @@ dotnet run --project .\NSearcher.Benchmarks -c Release -- `
   --compare-grep `
   --compare-ugrep `
   --grep-path "$env:ProgramFiles\Git\usr\bin\grep.exe" `
-  --ugrep-path "$env:LOCALAPPDATA\Microsoft\WinGet\Links\ugrep.exe" `
+  --ugrep-path "C:\Tools\ugrep\ugrep.exe" `
   --nsearcher-cli-path "$env:LOCALAPPDATA\Programs\NSearcher\NSearcher.exe"
-```
-
-Install `ugrep` if needed:
-
-```powershell
-winget install --id Genivia.ugrep --accept-package-agreements --accept-source-agreements
 ```
 
 Each benchmark run writes:

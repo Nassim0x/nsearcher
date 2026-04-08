@@ -313,6 +313,38 @@ public sealed class SearchEngineTests : IDisposable
     }
 
     [Fact]
+    public async Task RegexCountOnly_LongSingleLineAcrossBufferedChunksCountsMatches()
+    {
+        WriteFile(
+            "logs/long-line.log",
+            new string('a', 300_000) + " ERR-1042 middle ERR-3001 " + new string('b', 300_000));
+
+        var results = new List<SearchFileResult>();
+        var engine = new SearchEngine();
+
+        var summary = await engine.ExecuteAsync(
+            new SearchOptions
+            {
+                Pattern = @"ERR-\d{4}",
+                Paths = [Path.Combine(_rootDirectory, "logs")],
+                UseRegex = true,
+                CaseMode = CaseMode.Sensitive,
+                CountOnly = true
+            },
+            (result, _) =>
+            {
+                results.Add(result);
+                return ValueTask.CompletedTask;
+            });
+
+        var match = Assert.Single(results);
+        Assert.Equal(1, match.MatchLineCount);
+        Assert.Equal(2, match.MatchCount);
+        Assert.Equal(1, summary.MatchLines);
+        Assert.Equal(2, summary.MatchCount);
+    }
+
+    [Fact]
     public async Task RegexPrefilter_DoesNotSkipAlternationMatches()
     {
         WriteFile("regex/alternation.txt", "bar\n");

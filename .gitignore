@@ -1,12 +1,15 @@
 # Build outputs
 bin/
 obj/
+TestResults/
 
 # User / tool state
 .vs/
+.vscode/
 .tools/
 gcm-diagnose.log
 *.user
+*.rsuser
 *.suo
 *.ncb
 *.opendb
@@ -15,17 +18,12 @@ gcm-diagnose.log
 # Local benchmark / profiling scratch data
 literal-many-small-files/
 
-# Publish and profiling artifacts
-artifacts/native-launcher/
-artifacts/publish/
-artifacts/publish-aot/
-artifacts/releases/
-artifacts/profiling/
-
-# Benchmark artifacts: keep only the curated snapshot files referenced by the README
-artifacts/benchmarks/*.json
-artifacts/benchmarks/*.svg
+# Generated artifacts: keep only the curated benchmark snapshot files referenced by the README
+artifacts/*
+!artifacts/benchmarks/
+artifacts/benchmarks/*
 !artifacts/benchmarks/latest.json
 !artifacts/benchmarks/benchmark-20260402-231758.json
+!artifacts/benchmarks/benchmark-20260408-141405.json
 !artifacts/benchmarks/nsearcher-vs-ripgrep.svg
 !artifacts/benchmarks/nsearcher-vs-ripgrep-vs-grep-vs-ugrep.svg

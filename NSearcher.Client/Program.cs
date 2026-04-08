@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO.Pipes;
+using System.Runtime.InteropServices;
 using System.Text;
 
 using var cancellationTokenSource = new CancellationTokenSource();
@@ -38,7 +39,7 @@ internal static class ClientBridge
             return await RunServerDirectAsync(args, cancellationToken);
         }
 
-        var request = new DaemonRequest(args, Directory.GetCurrentDirectory(), Console.IsOutputRedirected);
+        var request = CreateDaemonRequest(args);
         var pipeName = CreatePipeName();
         var response = await TryExchangeAsync(pipeName, request, cancellationToken);
         DaemonResponse? startedResponse = null;
@@ -190,6 +191,10 @@ internal static class ClientBridge
             writer.Write(request.WorkingDirectory);
             writer.Write(request.DisableColor);
             WriteStringList(writer, request.Arguments);
+            writer.Write((byte)request.DirectOutput);
+            writer.Write(request.ClientProcessId);
+            writer.Write(request.StdoutHandle);
+            writer.Write(request.StderrHandle);
         }
 
         await WriteFrameAsync(stream, buffer.ToArray(), cancellationToken);
@@ -247,6 +252,45 @@ internal static class ClientBridge
         }
     }
 
+    private static DaemonRequest CreateDaemonRequest(string[] args)
+    {
+        var directOutput = DirectOutputFlags.None;
+        long stdoutHandle = 0;
+        long stderrHandle = 0;
+
+        if (OperatingSystem.IsWindows())
+        {
+            if (Console.IsOutputRedirected)
+            {
+                var handle = NativeMethods.GetStdHandle(NativeMethods.StandardOutputHandle);
+                if (handle != IntPtr.Zero && handle != NativeMethods.InvalidHandleValue)
+                {
+                    directOutput |= DirectOutputFlags.Stdout;
+                    stdoutHandle = handle.ToInt64();
+                }
+            }
+
+            if (Console.IsErrorRedirected)
+            {
+                var handle = NativeMethods.GetStdHandle(NativeMethods.StandardErrorHandle);
+                if (handle != IntPtr.Zero && handle != NativeMethods.InvalidHandleValue)
+                {
+                    directOutput |= DirectOutputFlags.Stderr;
+                    stderrHandle = handle.ToInt64();
+                }
+            }
+        }
+
+        return new DaemonRequest(
+            args,
+            Directory.GetCurrentDirectory(),
+            Console.IsOutputRedirected,
+            directOutput,
+            directOutput == DirectOutputFlags.None ? 0 : Environment.ProcessId,
+            stdoutHandle,
+            stderrHandle);
+    }
+
     private static string? GetInstalledServerPath()
     {
         var processPath = Environment.ProcessPath;
@@ -283,8 +327,33 @@ internal static class ClientBridge
 
         return builder.ToString();
     }
+
+    private static class NativeMethods
+    {
+        internal static readonly IntPtr InvalidHandleValue = new(-1);
+        internal const int StandardOutputHandle = -11;
+        internal const int StandardErrorHandle = -12;
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern IntPtr GetStdHandle(int standardHandle);
+    }
 }
 
-internal sealed record DaemonRequest(string[] Arguments, string WorkingDirectory, bool DisableColor);
+[Flags]
+internal enum DirectOutputFlags : byte
+{
+    None = 0,
+    Stdout = 1,
+    Stderr = 2
+}
+
+internal sealed record DaemonRequest(
+    string[] Arguments,
+    string WorkingDirectory,
+    bool DisableColor,
+    DirectOutputFlags DirectOutput = DirectOutputFlags.None,
+    int ClientProcessId = 0,
+    long StdoutHandle = 0,
+    long StderrHandle = 0);
 
 internal sealed record DaemonResponse(int ExitCode, string StandardOutput, string StandardError);

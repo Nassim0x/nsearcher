@@ -312,6 +312,7 @@ public sealed class SearchEngine
                 reader,
                 pattern,
                 options,
+                GetSummaryScanBufferSize(runtimeProfile.StreamBufferSize),
                 cts.Token);
 
             if (simpleScan.MatchLineCount == 0)
@@ -436,6 +437,7 @@ public sealed class SearchEngine
                     reader,
                     pattern,
                     options,
+                    GetSummaryScanBufferSize(runtimeProfile.StreamBufferSize),
                     cts.Token);
 
                 if (simpleScan.MatchLineCount == 0)
@@ -594,35 +596,110 @@ public sealed class SearchEngine
         StreamReader reader,
         SearchPattern pattern,
         SearchOptions options,
+        int scanBufferSize,
         CancellationToken cancellationToken)
     {
+        var buffer = ArrayPool<char>.Shared.Rent(Math.Max(1024, scanBufferSize));
         var matchLineCount = 0;
         var matchCount = 0;
-        string? line;
 
-        while ((line = reader.ReadLine()) is not null)
+        try
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            var carryLength = 0;
 
-            var lineMatchCount = pattern.CountLineMatches(
-                line,
-                stopAfterFirstMatch: options.FilesWithMatches);
-
-            if (lineMatchCount == 0)
+            while (true)
             {
-                continue;
-            }
+                cancellationToken.ThrowIfCancellationRequested();
 
-            matchLineCount++;
-            matchCount += lineMatchCount;
+                if (carryLength == buffer.Length)
+                {
+                    var expandedBuffer = ArrayPool<char>.Shared.Rent(buffer.Length * 2);
+                    buffer.AsSpan(0, carryLength).CopyTo(expandedBuffer);
+                    ArrayPool<char>.Shared.Return(buffer);
+                    buffer = expandedBuffer;
+                }
 
-            if (options.FilesWithMatches)
-            {
-                break;
+                var charsRead = reader.Read(buffer, carryLength, buffer.Length - carryLength);
+                if (charsRead == 0)
+                {
+                    if (carryLength > 0)
+                    {
+                        CountLineMatches(
+                            buffer.AsSpan(0, carryLength),
+                            pattern,
+                            options.FilesWithMatches,
+                            ref matchLineCount,
+                            ref matchCount);
+                    }
+
+                    return new SimpleScanResult(matchLineCount, matchCount);
+                }
+
+                var totalChars = carryLength + charsRead;
+                var chunk = buffer.AsSpan(0, totalChars);
+                var lineStart = 0;
+
+                while (lineStart < totalChars)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var newlineOffset = chunk[lineStart..].IndexOf('\n');
+                    if (newlineOffset < 0)
+                    {
+                        break;
+                    }
+
+                    CountLineMatches(
+                        chunk.Slice(lineStart, newlineOffset),
+                        pattern,
+                        options.FilesWithMatches,
+                        ref matchLineCount,
+                        ref matchCount);
+
+                    if (options.FilesWithMatches && matchLineCount > 0)
+                    {
+                        return new SimpleScanResult(matchLineCount, matchCount);
+                    }
+
+                    lineStart += newlineOffset + 1;
+                }
+
+                carryLength = totalChars - lineStart;
+                if (carryLength > 0)
+                {
+                    chunk[lineStart..].CopyTo(buffer);
+                }
             }
         }
+        finally
+        {
+            ArrayPool<char>.Shared.Return(buffer);
+        }
+    }
 
-        return new SimpleScanResult(matchLineCount, matchCount);
+    private static int GetSummaryScanBufferSize(int streamBufferSize) =>
+        Math.Max(4096, streamBufferSize / sizeof(char));
+
+    private static void CountLineMatches(
+        ReadOnlySpan<char> line,
+        SearchPattern pattern,
+        bool stopAfterFirstMatch,
+        ref int matchLineCount,
+        ref int matchCount)
+    {
+        if (!line.IsEmpty && line[^1] == '\r')
+        {
+            line = line[..^1];
+        }
+
+        var lineMatchCount = pattern.CountLineMatches(line, stopAfterFirstMatch);
+        if (lineMatchCount == 0)
+        {
+            return;
+        }
+
+        matchLineCount++;
+        matchCount += lineMatchCount;
     }
 
     private static IEnumerable<SearchCandidate> EnumerateCandidates(

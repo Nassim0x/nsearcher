@@ -130,7 +130,7 @@
         "NSearcherPath": "C:\\Users\\dontb\\AppData\\Local\\Programs\\NSearcher\\NSearcher.exe",
         "RipgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\OpenAI\\Codex\\bin\\rg.exe",
         "GrepPath": "C:\\Program Files\\Git\\usr\\bin\\grep.exe",
-        "UgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Microsoft\\WinGet\\Links\\ugrep.exe",
+        "UgrepPath": "C:\\Tools\\ugrep\\ugrep.exe",
         "NSearcher": {
           "ToolName": "NSearcher",
           "RunsMs": [
@@ -275,7 +275,7 @@
         "NSearcherPath": "C:\\Users\\dontb\\AppData\\Local\\Programs\\NSearcher\\NSearcher.exe",
         "RipgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\OpenAI\\Codex\\bin\\rg.exe",
         "GrepPath": "C:\\Program Files\\Git\\usr\\bin\\grep.exe",
-        "UgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Microsoft\\WinGet\\Links\\ugrep.exe",
+        "UgrepPath": "C:\\Tools\\ugrep\\ugrep.exe",
         "NSearcher": {
           "ToolName": "NSearcher",
           "RunsMs": [
@@ -420,7 +420,7 @@
         "NSearcherPath": "C:\\Users\\dontb\\AppData\\Local\\Programs\\NSearcher\\NSearcher.exe",
         "RipgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\OpenAI\\Codex\\bin\\rg.exe",
         "GrepPath": "C:\\Program Files\\Git\\usr\\bin\\grep.exe",
-        "UgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Microsoft\\WinGet\\Links\\ugrep.exe",
+        "UgrepPath": "C:\\Tools\\ugrep\\ugrep.exe",
         "NSearcher": {
           "ToolName": "NSearcher",
           "RunsMs": [
@@ -565,7 +565,7 @@
         "NSearcherPath": "C:\\Users\\dontb\\AppData\\Local\\Programs\\NSearcher\\NSearcher.exe",
         "RipgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\OpenAI\\Codex\\bin\\rg.exe",
         "GrepPath": "C:\\Program Files\\Git\\usr\\bin\\grep.exe",
-        "UgrepPath": "C:\\Users\\dontb\\AppData\\Local\\Microsoft\\WinGet\\Links\\ugrep.exe",
+        "UgrepPath": "C:\\Tools\\ugrep\\ugrep.exe",
         "NSearcher": {
           "ToolName": "NSearcher",
           "RunsMs": [

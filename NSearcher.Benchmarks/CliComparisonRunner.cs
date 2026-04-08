@@ -66,12 +66,6 @@ internal static class CliComparisonRunner
     private static readonly string[] UgrepCandidatePaths =
     [
         Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "Microsoft",
-            "WinGet",
-            "Links",
-            "ugrep.exe"),
-        Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
             "ugrep",
             "bin",
